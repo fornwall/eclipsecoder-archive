@@ -268,7 +268,7 @@ class ProblemScraper {
 	private String sessionIdCookie;
 
 	ProblemScraper(String username, String password) throws Exception {
-		URL url = new URL("https://www.topcoder.com/tc"); //$NON-NLS-1$
+		URL url = new URL("https://community.topcoder.com/tc"); //$NON-NLS-1$
 
 		URLConnection urlConn = url.openConnection();
 		urlConn.setDoOutput(true);
@@ -381,7 +381,7 @@ class ProblemScraper {
 	}
 
 	private String getPage(String path) throws Exception {
-		URL url = new URL("http://www.topcoder.com/" + path); //$NON-NLS-1$
+		URL url = new URL("http://community.topcoder.com/" + path); //$NON-NLS-1$
 		URLConnection connection = url.openConnection();
 		// FIXME: when to set this (breaks i.e. editorial fetching)?
 		connection.setRequestProperty("Cookie", sessionIdCookie); //$NON-NLS-1$
