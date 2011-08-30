@@ -143,7 +143,7 @@ public class ArchiveListView extends ViewPart {
 						.getFirstElement();
 				try {
 					// TODO: Cache a bit?
-					URLConnection c = new URL("http://www.topcoder.com/tc?module=Static&d1=match_editorials&d2=archive") //$NON-NLS-1$
+					URLConnection c = new URL("http://apps.topcoder.com/wiki/display/tc/Algorithm+Problem+Set+Analysis") //$NON-NLS-1$
 							.openConnection();
 					BufferedReader reader = new BufferedReader(new InputStreamReader(c.getInputStream()));
 					try {
@@ -159,8 +159,7 @@ public class ArchiveListView extends ViewPart {
 								PlatformUI.getWorkbench().getBrowserSupport().createBrowser(
 										IWorkbenchBrowserSupport.AS_VIEW, ArchiveListView.class.getCanonicalName(),
 										"", "").openURL( //$NON-NLS-1$ //$NON-NLS-2$
-										new URL("http://www.topcoder.com" //$NON-NLS-1$
-												+ href));
+										new URL(href));
 								return;
 							}
 						}
