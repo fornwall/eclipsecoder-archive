@@ -179,27 +179,27 @@ class ProblemScraper {
 
 		for (ProblemStats stats : problemStats) {
 			File file = new File("src/net/fornwall/eclipsecoder/archive/problems/problem-" //$NON-NLS-1$
-					+ stats.getProblemId() + ".xml"); //$NON-NLS-1$
+					+ stats.problemId + ".xml"); //$NON-NLS-1$
 			if (file.exists()) {
-				System.out.println("skipping file " + stats.getClassName()); //$NON-NLS-1$
+				System.out.println("skipping file " + stats.className); //$NON-NLS-1$
 				continue;
-			} else if (stats.getClassName().equals("BishopOnTheBoard")) { //$NON-NLS-1$
+			} else if (stats.className.equals("BishopOnTheBoard")) { //$NON-NLS-1$
 				// broken html in problem view (empty column)
 				continue;
-			} else if (stats.getClassName().equals("BlockDistance") //$NON-NLS-1$
-					|| stats.getClassName().equals("Foobar") //$NON-NLS-1$
-					|| stats.getClassName().equals("Graduation")) { //$NON-NLS-1$
+			} else if (stats.className.equals("BlockDistance") //$NON-NLS-1$
+					|| stats.className.equals("Foobar") //$NON-NLS-1$
+					|| stats.className.equals("Graduation")) { //$NON-NLS-1$
 				// string escaping, needs to be fixed
 				continue;
-			} else if (stats.getClassName().equals("Connected")) { //$NON-NLS-1$
+			} else if (stats.className.equals("Connected")) { //$NON-NLS-1$
 				// broken page (just empty)
 				continue;
-			} else if (stats.getClassName().equals("DecodeMoveToFront")) { //$NON-NLS-1$
+			} else if (stats.className.equals("DecodeMoveToFront")) { //$NON-NLS-1$
 				// broken test cases on page - first two examples has three
 				// arguments, not two
 				continue;
 			}
-			System.out.println("Getting problem " + stats.getClassName()); //$NON-NLS-1$
+			System.out.println("Getting problem " + stats.className); //$NON-NLS-1$
 			// ProblemStatement statement =
 			connection.getProblemStatement(stats);
 			// XMLEncoder encoder = new XMLEncoder(new FileOutputStream(file));
@@ -304,7 +304,7 @@ class ProblemScraper {
 		// we need a coder and room id of a correct submission to obtain the
 		// test cases.
 		String page = getPage("tc?module=ProblemDetail&rd=" //$NON-NLS-1$
-				+ problem.getRoundId() + "&pm=" + problem.getProblemId()); //$NON-NLS-1$
+				+ problem.roundId + "&pm=" + problem.problemId); //$NON-NLS-1$
 
 		// the problem detail page, links to the top submission of each language
 		// - any will do
@@ -315,8 +315,8 @@ class ProblemScraper {
 		}
 		int coderId = Integer.parseInt(coderIdMatch);
 		page = getPage("stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
-				+ problem.getRoundId() + "&pm=" //$NON-NLS-1$
-				+ problem.getProblemId());
+				+ problem.roundId + "&pm=" //$NON-NLS-1$
+				+ problem.problemId);
 
 		if (page.contains("Solution Not Available")) { //$NON-NLS-1$
 			return null;
@@ -345,14 +345,14 @@ class ProblemScraper {
 	 */
 	public String getHtmlProblemStatement(ProblemStats problem) throws Exception {
 		String page = getPage("stat?c=problem_statement&pm=" //$NON-NLS-1$
-				+ problem.getProblemId() + "&rd=" + problem.getRoundId()); //$NON-NLS-1$
+				+ problem.problemId + "&rd=" + problem.roundId); //$NON-NLS-1$
 
 		// the problem statement is embedded in a page
 		Matcher matcher = Pattern.compile("<TD CLASS=\"problemText\" VALIGN=\"middle\" ALIGN=\"left\">(.*?) </TD>", //$NON-NLS-1$
 				Pattern.DOTALL).matcher(page);
 		matcher.find();
 		try {
-			return "<html><head><title>" + problem.getClassName() //$NON-NLS-1$
+			return "<html><head><title>" + problem.className //$NON-NLS-1$
 					+ "</title></head><body>" + matcher.group(1) //$NON-NLS-1$
 					+ "</body></html>"; //$NON-NLS-1$
 		} catch (IllegalStateException e) {

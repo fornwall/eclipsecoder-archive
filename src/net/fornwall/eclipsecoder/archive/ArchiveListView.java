@@ -149,13 +149,13 @@ public class ArchiveListView extends ViewPart {
 					try {
 						String line;
 						while ((line = reader.readLine()) != null) {
-							if (line.contains(stats.getContestName())) {
+							if (line.contains(stats.contestName)) {
 								String href = Utilities.getMatch(line, "<a href=\"(.*?)\"", 1); //$NON-NLS-1$
 								href = href.replaceAll("&amp;", "&");
 								// jump to the right place directly - older
 								// problem statements are not formatted this
 								// way, though it cannot hurt
-								href += "#" + stats.getProblemId(); //$NON-NLS-1$
+								href += "#" + stats.problemId; //$NON-NLS-1$
 								PlatformUI
 										.getWorkbench()
 										.getBrowserSupport()

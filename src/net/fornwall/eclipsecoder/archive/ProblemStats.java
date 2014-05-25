@@ -2,25 +2,16 @@ package net.fornwall.eclipsecoder.archive;
 
 import java.io.Serializable;
 
-/**
- * The stats for a problem.
- */
 public class ProblemStats implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final int COLUMN_CLASS_NAME = 0;
-
 	public static final int COLUMN_CONTEST_NAME = 1;
-
 	public static final int COLUMN_DATE = 2;
-
 	public static final int COLUMN_DIVISION = 3;
-
 	public static final int COLUMN_LEVEL = 4;
-
 	public static final int COLUMN_SUCCESS_RATE = 5;
-
 	public static final int COLUMN_CATEGORIES = 6;
 
 	static final String[] COLUMN_NAMES = { Messages.columnNameClassName, Messages.columnNameContestName,
@@ -28,25 +19,15 @@ public class ProblemStats implements Serializable {
 			Messages.columnNameSuccessRate, Messages.columnNameCategories };
 
 	String categories;
-
 	String className;
-
 	String contestDate;
-
 	String contestName;
-
 	int div1Level;
-
 	double div1Succ;
-
 	int div2Level;
-
 	double div2Succ;
-
 	int problemId;
-
 	int roundId;
-
 	int submissions;
 
 	public ProblemStats() {
@@ -88,39 +69,7 @@ public class ProblemStats implements Serializable {
 
 	@Override
 	public boolean equals(Object other) {
-		return (other instanceof ProblemStats && ((ProblemStats) other).getProblemId() == getProblemId());
-	}
-
-	public String getCategories() {
-		return categories;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public String getContestDate() {
-		return contestDate;
-	}
-
-	public String getContestName() {
-		return contestName;
-	}
-
-	public int getDiv1Level() {
-		return div1Level;
-	}
-
-	public double getDiv1Succ() {
-		return div1Succ;
-	}
-
-	public int getDiv2Level() {
-		return div2Level;
-	}
-
-	public double getDiv2Succ() {
-		return div2Succ;
+		return (other instanceof ProblemStats && ((ProblemStats) other).problemId == problemId);
 	}
 
 	public String getFieldString(int which) {
@@ -175,69 +124,9 @@ public class ProblemStats implements Serializable {
 		}
 	}
 
-	public String getHtmlProblemStatement() {
-		return null;
-	}
-
-	public int getProblemId() {
-		return problemId;
-	}
-
-	public int getRoundId() {
-		return roundId;
-	}
-
-	public int getSubmissions() {
-		return submissions;
-	}
-
 	@Override
 	public int hashCode() {
 		return problemId;
-	}
-
-	public void setCategories(String categories) {
-		this.categories = categories;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public void setContestDate(String contestDate) {
-		this.contestDate = contestDate;
-	}
-
-	public void setContestName(String contestName) {
-		this.contestName = contestName;
-	}
-
-	public void setDiv1Level(int div1Level) {
-		this.div1Level = div1Level;
-	}
-
-	public void setDiv1Succ(double div1Succ) {
-		this.div1Succ = div1Succ;
-	}
-
-	public void setDiv2Level(int div2Level) {
-		this.div2Level = div2Level;
-	}
-
-	public void setDiv2Succ(double div2Succ) {
-		this.div2Succ = div2Succ;
-	}
-
-	public void setProblemId(int problemId) {
-		this.problemId = problemId;
-	}
-
-	public void setRoundId(int roundId) {
-		this.roundId = roundId;
-	}
-
-	public void setSubmissions(int submissions) {
-		this.submissions = submissions;
 	}
 
 	@Override

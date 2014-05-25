@@ -46,24 +46,24 @@ public class SubmissionListFetcherJob extends Job {
 		final List<String> languageStrings = new ArrayList<String>();
 
 		// rough approximation used for progress monitor
-		final int expected = (stats.getDiv1Level() > 0 && stats.getDiv2Level() > 0) ? 1400 : 700;
+		final int expected = (stats.div1Level > 0 && stats.div2Level > 0) ? 1400 : 700;
 
-		if (stats.getDiv1Level() != -1) {
+		if (stats.div1Level != -1) {
 			divisions.add(1);
-			levelStrings.add("level_" + LEVEL_NAMES[stats.getDiv1Level()] //$NON-NLS-1$
+			levelStrings.add("level_" + LEVEL_NAMES[stats.div1Level] //$NON-NLS-1$
 					+ "_status"); //$NON-NLS-1$
-			pointsStrings.add("level_" + LEVEL_NAMES[stats.getDiv1Level()] //$NON-NLS-1$
+			pointsStrings.add("level_" + LEVEL_NAMES[stats.div1Level] //$NON-NLS-1$
 					+ "_final_points"); //$NON-NLS-1$
-			languageStrings.add("level_" + LEVEL_NAMES[stats.getDiv1Level()] //$NON-NLS-1$
+			languageStrings.add("level_" + LEVEL_NAMES[stats.div1Level] //$NON-NLS-1$
 					+ "_language"); //$NON-NLS-1$
 		}
-		if (stats.getDiv2Level() != -1) {
+		if (stats.div2Level != -1) {
 			divisions.add(2);
-			levelStrings.add("level_" + LEVEL_NAMES[stats.getDiv2Level()] //$NON-NLS-1$
+			levelStrings.add("level_" + LEVEL_NAMES[stats.div2Level] //$NON-NLS-1$
 					+ "_status"); //$NON-NLS-1$
-			pointsStrings.add("level_" + LEVEL_NAMES[stats.getDiv2Level()] //$NON-NLS-1$
+			pointsStrings.add("level_" + LEVEL_NAMES[stats.div2Level] //$NON-NLS-1$
 					+ "_final_points"); //$NON-NLS-1$
-			languageStrings.add("level_" + LEVEL_NAMES[stats.getDiv2Level()] //$NON-NLS-1$
+			languageStrings.add("level_" + LEVEL_NAMES[stats.div2Level] //$NON-NLS-1$
 					+ "_language"); //$NON-NLS-1$
 
 		}
@@ -71,7 +71,7 @@ public class SubmissionListFetcherJob extends Job {
 		try {
 			monitor.subTask(Messages.openingConnection);
 			URL url = new URL("http://www.topcoder.com/tc?module=BasicData&c=dd_round_results&rd=" //$NON-NLS-1$
-					+ stats.getRoundId());
+					+ stats.roundId);
 			URLConnection connection = url.openConnection();
 			monitor.worked(3);
 
@@ -138,7 +138,7 @@ public class SubmissionListFetcherJob extends Job {
 			monitor.subTask(Messages.updatingTable);
 			Utilities.runInDisplayThread(new Runnable() {
 				public void run() {
-					SubmissionListView.showSolutions(solutionList, stats.getRoundId(), stats.getProblemId());
+					SubmissionListView.showSolutions(solutionList, stats.roundId, stats.problemId);
 				}
 			});
 			return Status.OK_STATUS;
