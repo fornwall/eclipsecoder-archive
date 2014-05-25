@@ -2,21 +2,17 @@ package net.fornwall.eclipsecoder.archive;
 
 public class Submission {
 
-	private int coderId;
+	public final int coderId;
 
-	private String coderHandle;
+	public final String coderHandle;
 
-	private int coderNewRating;
+	public final int coderNewRating;
 
-	private int points;
+	public final int points;
 
-	private String language;
+	public final String language;
 
-	private int level;
-
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+	public final int level;
 
 	public Submission(int coderId, String coderHandle, int coderNewRating, int points, String language, int level) {
 		this.coderId = coderId;
@@ -25,46 +21,6 @@ public class Submission {
 		this.points = points;
 		this.language = language;
 		this.level = level;
-	}
-
-	public int getCoderId() {
-		return coderId;
-	}
-
-	public void setCoderId(int coderId) {
-		this.coderId = coderId;
-	}
-
-	public String getCoderHandle() {
-		return coderHandle;
-	}
-
-	public void setCoderHandler(String coderHandler) {
-		this.coderHandle = coderHandler;
-	}
-
-	public int getCoderNewRating() {
-		return coderNewRating;
-	}
-
-	public void setCoderNewRating(int coderNewRating) {
-		this.coderNewRating = coderNewRating;
-	}
-
-	public int getPoints() {
-		return points;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setPoints(int points) {
-		this.points = points;
-	}
-
-	public int getLevel() {
-		return level;
 	}
 
 }

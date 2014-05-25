@@ -38,7 +38,7 @@ public class SubmissionFetcherJob extends Job {
 				return Status.CANCEL_STATUS;
 			}
 			monitor.worked(20);
-			final String submissionString = scraper.getSubmission(submission.getCoderId(), roundId, problemId, monitor);
+			final String submissionString = scraper.getSubmission(submission.coderId, roundId, problemId, monitor);
 			if (submissionString == null) {
 				return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
 						Messages.submissionNotAvailable, null);
@@ -52,18 +52,18 @@ public class SubmissionFetcherJob extends Job {
 
 				public void run() {
 					String fileExtension = "txt"; //$NON-NLS-1$
-					if (submission.getLanguage().equals("Java")) { //$NON-NLS-1$
+					if (submission.language.equals("Java")) { //$NON-NLS-1$
 						fileExtension = "java"; //$NON-NLS-1$
-					} else if (submission.getLanguage().equals("C++")) { //$NON-NLS-1$
+					} else if (submission.language.equals("C++")) { //$NON-NLS-1$
 						fileExtension = "cpp"; //$NON-NLS-1$
-					} else if (submission.getLanguage().equals("C#")) { //$NON-NLS-1$
+					} else if (submission.language.equals("C#")) { //$NON-NLS-1$
 						fileExtension = "cs"; //$NON-NLS-1$
-					} else if (submission.getLanguage().equals("VB")) { //$NON-NLS-1$
+					} else if (submission.language.equals("VB")) { //$NON-NLS-1$
 						fileExtension = "vb"; //$NON-NLS-1$
 					}
 
-					EditorOpener.openEditor(submissionString, submission.getCoderHandle() + Messages.sSubmission,
-							submission.getCoderHandle() + Messages.sSubmissionToProblem, fileExtension);
+					EditorOpener.openEditor(submissionString, submission.coderHandle + Messages.sSubmission,
+							submission.coderHandle + Messages.sSubmissionToProblem, fileExtension);
 				}
 
 			});

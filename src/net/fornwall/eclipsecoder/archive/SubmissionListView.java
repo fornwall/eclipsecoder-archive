@@ -27,9 +27,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 class SolutionComparator extends ViewerSorter {
-	public int column;
 
-	public boolean reversed;
+	public final int column;
+	public final boolean reversed;
 
 	public SolutionComparator(int column, boolean reversed) {
 		this.column = column;
@@ -43,19 +43,19 @@ class SolutionComparator extends ViewerSorter {
 		int ret;
 		switch (column) {
 		case 0:
-			ret = s1.getCoderHandle().compareTo(s2.getCoderHandle());
+			ret = s1.coderHandle.compareTo(s2.coderHandle);
 			break;
 		case 1:
-			ret = s1.getCoderNewRating() - s2.getCoderNewRating();
+			ret = s1.coderNewRating - s2.coderNewRating;
 			break;
 		case 2:
-			ret = s1.getPoints() - s2.getPoints();
+			ret = s1.points - s2.points;
 			break;
 		case 3:
-			ret = s1.getLanguage().compareTo(s2.getLanguage());
+			ret = s1.language.compareTo(s2.language);
 			break;
 		case 4:
-			ret = s1.getLevel() - s2.getLevel();
+			ret = s1.level - s2.level;
 			break;
 		default:
 			throw new RuntimeException("Unknown column: " + column); //$NON-NLS-1$
@@ -75,15 +75,15 @@ class SolutionLabelProvider extends LabelProvider implements ITableLabelProvider
 		Submission solution = (Submission) element;
 		switch (columnIndex) {
 		case 0:
-			return solution.getCoderHandle();
+			return solution.coderHandle;
 		case 1:
-			return String.valueOf(solution.getCoderNewRating());
+			return String.valueOf(solution.coderNewRating);
 		case 2:
-			return String.valueOf(solution.getPoints() / 100) + '.' + String.valueOf(solution.getPoints() % 100);
+			return String.valueOf(solution.points / 100) + '.' + String.valueOf(solution.points % 100);
 		case 3:
-			return solution.getLanguage();
+			return solution.language;
 		case 4:
-			return String.valueOf(solution.getLevel());
+			return String.valueOf(solution.level);
 		default:
 			throw new RuntimeException("Unknown column: " + columnIndex); //$NON-NLS-1$
 		}
