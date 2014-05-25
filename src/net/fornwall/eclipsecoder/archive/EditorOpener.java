@@ -23,8 +23,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EditorOpener {
 
-	private static class StringStorage extends PlatformObject implements
-			IStorage {
+	private static class StringStorage extends PlatformObject implements IStorage {
 		private String input;
 
 		private String name;
@@ -52,16 +51,15 @@ public class EditorOpener {
 
 	}
 
-	private static class StringStorageEditorInput extends PlatformObject
-			implements IStorageEditorInput {
+	private static class StringStorageEditorInput extends PlatformObject implements IStorageEditorInput {
 		private ImageDescriptor imageDescriptor;
 
 		private StringStorage stringStorage;
 
 		private String toolTipText;
 
-		public StringStorageEditorInput(String inputString, String name,
-				String toolTipText, ImageDescriptor imageDescriptor) {
+		public StringStorageEditorInput(String inputString, String name, String toolTipText,
+				ImageDescriptor imageDescriptor) {
 			stringStorage = new StringStorage(inputString, name);
 			this.toolTipText = toolTipText;
 			this.imageDescriptor = imageDescriptor;
@@ -105,22 +103,19 @@ public class EditorOpener {
 	 * @param fileExtension
 	 *            The file extension used to find the appropriate editor
 	 */
-	public static void openEditor(String input, String name,
-			String toolTipText, String fileExtension) {
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
+	public static void openEditor(String input, String name, String toolTipText, String fileExtension) {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
 		String editorId = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 		ImageDescriptor imageDescriptor = null;
-		IEditorDescriptor defaultEditorDescriptor = PlatformUI.getWorkbench()
-				.getEditorRegistry().getDefaultEditor("." + fileExtension); //$NON-NLS-1$
+		IEditorDescriptor defaultEditorDescriptor = PlatformUI.getWorkbench().getEditorRegistry()
+				.getDefaultEditor("." + fileExtension); //$NON-NLS-1$
 		if (defaultEditorDescriptor != null) {
 			editorId = defaultEditorDescriptor.getId();
 			imageDescriptor = defaultEditorDescriptor.getImageDescriptor();
 		}
 
-		IStorageEditorInput editorInput = new StringStorageEditorInput(input,
-				name, toolTipText, imageDescriptor);
+		IStorageEditorInput editorInput = new StringStorageEditorInput(input, name, toolTipText, imageDescriptor);
 
 		try {
 			page.openEditor(editorInput, editorId);

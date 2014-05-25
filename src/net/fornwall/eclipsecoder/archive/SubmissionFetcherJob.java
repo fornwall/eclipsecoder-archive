@@ -20,8 +20,7 @@ public class SubmissionFetcherJob extends Job {
 
 	private int problemId;
 
-	public SubmissionFetcherJob(Submission submission, int roundId,
-			int problemId) {
+	public SubmissionFetcherJob(Submission submission, int roundId, int problemId) {
 		super(Messages.retrievingSubmission);
 		this.submission = submission;
 		this.roundId = roundId;
@@ -33,17 +32,16 @@ public class SubmissionFetcherJob extends Job {
 		monitor.beginTask(Messages.retrievingSubmission, 100);
 		try {
 			monitor.subTask(Messages.loggingIn);
-			ProblemScraper scraper = new ProblemScraper(EclipseCoderPlugin
-					.tcUserName(), EclipseCoderPlugin.tcPassword());
+			ProblemScraper scraper = new ProblemScraper(EclipseCoderPlugin.tcUserName(),
+					EclipseCoderPlugin.tcPassword());
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 			monitor.worked(20);
-			final String submissionString = scraper.getSubmission(submission
-					.getCoderId(), roundId, problemId, monitor);
+			final String submissionString = scraper.getSubmission(submission.getCoderId(), roundId, problemId, monitor);
 			if (submissionString == null) {
-				return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID,
-						IStatus.OK, Messages.submissionNotAvailable, null);
+				return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
+						Messages.submissionNotAvailable, null);
 			}
 
 			if (monitor.isCanceled()) {
@@ -64,18 +62,15 @@ public class SubmissionFetcherJob extends Job {
 						fileExtension = "vb"; //$NON-NLS-1$
 					}
 
-					EditorOpener.openEditor(submissionString, submission
-							.getCoderHandle()
-							+ Messages.sSubmission, submission.getCoderHandle()
-							+ Messages.sSubmissionToProblem, fileExtension);
+					EditorOpener.openEditor(submissionString, submission.getCoderHandle() + Messages.sSubmission,
+							submission.getCoderHandle() + Messages.sSubmissionToProblem, fileExtension);
 				}
 
 			});
 			return Status.OK_STATUS;
 		} catch (Exception e1) {
-			return new Status(IStatus.WARNING, EclipseCoderPlugin.PLUGIN_ID,
-					IStatus.OK, Messages.failedRetrievingSubmission
-							+ e1.getMessage(), e1);
+			return new Status(IStatus.WARNING, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
+					Messages.failedRetrievingSubmission + e1.getMessage(), e1);
 		}
 	}
 

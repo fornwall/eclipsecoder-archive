@@ -18,8 +18,7 @@ public class Submission {
 		this.language = language;
 	}
 
-	public Submission(int coderId, String coderHandle, int coderNewRating,
-			int points, String language, int level) {
+	public Submission(int coderId, String coderHandle, int coderNewRating, int points, String language, int level) {
 		this.coderId = coderId;
 		this.coderHandle = coderHandle;
 		this.coderNewRating = coderNewRating;

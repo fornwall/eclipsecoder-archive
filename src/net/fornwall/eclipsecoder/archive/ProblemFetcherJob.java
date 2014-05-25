@@ -33,15 +33,13 @@ public class ProblemFetcherJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(Messages.checkingOutProblem, 100);
 		try {
-			String language = EclipseCoderPlugin.getDefault()
-					.getPreferenceStore().getString(
-							EclipseCoderPlugin.PREFERENCE_LANGUAGE);
+			String language = EclipseCoderPlugin.getDefault().getPreferenceStore()
+					.getString(EclipseCoderPlugin.PREFERENCE_LANGUAGE);
 			List<String> availabe = LanguageSupportFactory.supportedLanguages();
 			if (language == null || !availabe.contains(language)) {
 
 				if (availabe.isEmpty()) {
-					return new Status(IStatus.ERROR,
-							EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
+					return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
 							Messages.noLanguageSupportFound, null);
 				}
 
@@ -57,13 +55,12 @@ public class ProblemFetcherJob extends Job {
 			monitor.worked(10);
 			ProblemScraper scraper = null;
 			try {
-				scraper = new ProblemScraper(EclipseCoderPlugin.tcUserName(),
-						EclipseCoderPlugin.tcPassword());
+				scraper = new ProblemScraper(EclipseCoderPlugin.tcUserName(), EclipseCoderPlugin.tcPassword());
 			} catch (LoginException loginProblem) {
 				return ProblemScraper.createLoginFailedStatus(loginProblem);
 			} catch (UnknownHostException e) {
-				return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID,
-						IStatus.OK, Messages.unableToConnectToTopCoder, e);
+				return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
+						Messages.unableToConnectToTopCoder, e);
 			}
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
@@ -75,22 +72,19 @@ public class ProblemFetcherJob extends Job {
 				return Status.CANCEL_STATUS;
 			monitor.worked(30);
 			monitor.subTask(Messages.downloadingTestCases);
-			List<ProblemScraper.StringPair> testCasesStrings = scraper
-					.getExamples(stats);
+			List<ProblemScraper.StringPair> testCasesStrings = scraper.getExamples(stats);
 
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 			monitor.worked(15);
 			monitor.subTask(Messages.parsingProblem);
-			final ProblemStatement problemStatement = ProblemParser
-					.parseProblem(html, testCasesStrings);
+			final ProblemStatement problemStatement = ProblemParser.parseProblem(html, testCasesStrings);
 
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 			monitor.worked(15);
 			monitor.subTask(Messages.creatingLanguageSupport);
-			final LanguageSupport languageSupport = LanguageSupportFactory
-					.createLanguageSupport(finalLanguage);
+			final LanguageSupport languageSupport = LanguageSupportFactory.createLanguageSupport(finalLanguage);
 
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;

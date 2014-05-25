@@ -156,10 +156,12 @@ public class ArchiveListView extends ViewPart {
 								// problem statements are not formatted this
 								// way, though it cannot hurt
 								href += "#" + stats.getProblemId(); //$NON-NLS-1$
-								PlatformUI.getWorkbench().getBrowserSupport().createBrowser(
-										IWorkbenchBrowserSupport.AS_VIEW, ArchiveListView.class.getCanonicalName(),
-										"", "").openURL( //$NON-NLS-1$ //$NON-NLS-2$
-										new URL(href));
+								PlatformUI
+										.getWorkbench()
+										.getBrowserSupport()
+										.createBrowser(IWorkbenchBrowserSupport.AS_VIEW,
+												ArchiveListView.class.getCanonicalName(), "", "").openURL( //$NON-NLS-1$ //$NON-NLS-2$
+												new URL(href));
 								return;
 							}
 						}
@@ -242,15 +244,15 @@ public class ArchiveListView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager menuManager) {
-		ImageDescriptor updateListImage = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_COPY);
+		ImageDescriptor updateListImage = PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY);
 
 		IAction theAction = new DisabledWhileRunningJobAction(Messages.updateListActionName, updateListImage,
 				updateListJob);
 		menuManager.add(theAction);
 
-		String preferedLanguage = EclipseCoderPlugin.getDefault().getPreferenceStore().getString(
-				EclipseCoderPlugin.PREFERENCE_LANGUAGE);
+		String preferedLanguage = EclipseCoderPlugin.getDefault().getPreferenceStore()
+				.getString(EclipseCoderPlugin.PREFERENCE_LANGUAGE);
 		final String LANG_GROUP = "lang_group"; //$NON-NLS-1$
 
 		MenuManager langMenuManager = new MenuManager(Messages.useLanguageActionName, null);
@@ -263,8 +265,8 @@ public class ArchiveListView extends ViewPart {
 				@Override
 				public void run() {
 					if (isChecked()) {
-						EclipseCoderPlugin.getDefault().getPreferenceStore().setValue(
-								EclipseCoderPlugin.PREFERENCE_LANGUAGE, getText());
+						EclipseCoderPlugin.getDefault().getPreferenceStore()
+								.setValue(EclipseCoderPlugin.PREFERENCE_LANGUAGE, getText());
 					}
 				}
 			};

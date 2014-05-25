@@ -65,8 +65,7 @@ class SolutionComparator extends ViewerSorter {
 
 }
 
-class SolutionLabelProvider extends LabelProvider implements
-		ITableLabelProvider {
+class SolutionLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
@@ -80,8 +79,7 @@ class SolutionLabelProvider extends LabelProvider implements
 		case 1:
 			return String.valueOf(solution.getCoderNewRating());
 		case 2:
-			return String.valueOf(solution.getPoints() / 100) + '.'
-					+ String.valueOf(solution.getPoints() % 100);
+			return String.valueOf(solution.getPoints() / 100) + '.' + String.valueOf(solution.getPoints() % 100);
 		case 3:
 			return solution.getLanguage();
 		case 4:
@@ -100,18 +98,15 @@ class SolutionLabelProvider extends LabelProvider implements
 public class SubmissionListView extends ViewPart {
 	static SubmissionListView instance;
 
-	public static final String VIEW_ID = SubmissionListView.class
-			.getCanonicalName();
+	public static final String VIEW_ID = SubmissionListView.class.getCanonicalName();
 
 	/**
 	 * Update the problem list table by downloading the latest list from the
 	 * TopCoder web site and displaying them in the problem list table.
 	 */
-	public static void showSolutions(List<Submission> solutions, int roundId,
-			int problemId) {
+	public static void showSolutions(List<Submission> solutions, int roundId, int problemId) {
 		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getActivePage().showView(SubmissionListView.VIEW_ID);
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SubmissionListView.VIEW_ID);
 		} catch (PartInitException e) {
 			Utilities.showException(e);
 		}
@@ -145,9 +140,8 @@ public class SubmissionListView extends ViewPart {
 		viewer.setLabelProvider(new SolutionLabelProvider());
 		viewer.setContentProvider(new ArrayContentProvider());
 
-		for (String columnTitle : new String[] { Messages.columnNameCoder,
-				Messages.columnNameRating, Messages.columnNamePoints,
-				Messages.columnNameLanguage, Messages.columnNameLevel }) {
+		for (String columnTitle : new String[] { Messages.columnNameCoder, Messages.columnNameRating,
+				Messages.columnNamePoints, Messages.columnNameLanguage, Messages.columnNameLevel }) {
 			TableColumn column = new TableColumn(solutionListTable, SWT.LEFT);
 			column.setText(columnTitle);
 		}
@@ -157,25 +151,19 @@ public class SubmissionListView extends ViewPart {
 		solutionListTable.setSortDirection(SWT.DOWN);
 		for (int i = 0; i < solutionListTable.getColumnCount(); i++) {
 			final int index = i;
-			solutionListTable.getColumn(i).addSelectionListener(
-					new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							SolutionComparator previousSorter = (SolutionComparator) viewer
-									.getSorter();
-							boolean reversed = false;
-							if (previousSorter.column == index) {
-								reversed = !previousSorter.reversed;
-							}
-							solutionListTable.setSortColumn(solutionListTable
-									.getColumn(index));
-							solutionListTable
-									.setSortDirection(reversed ? SWT.UP
-											: SWT.DOWN);
-							viewer.setSorter(new SolutionComparator(index,
-									reversed));
-						}
-					});
+			solutionListTable.getColumn(i).addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					SolutionComparator previousSorter = (SolutionComparator) viewer.getSorter();
+					boolean reversed = false;
+					if (previousSorter.column == index) {
+						reversed = !previousSorter.reversed;
+					}
+					solutionListTable.setSortColumn(solutionListTable.getColumn(index));
+					solutionListTable.setSortDirection(reversed ? SWT.UP : SWT.DOWN);
+					viewer.setSorter(new SolutionComparator(index, reversed));
+				}
+			});
 			solutionListTable.getColumn(i).pack();
 		}
 
@@ -184,8 +172,8 @@ public class SubmissionListView extends ViewPart {
 		solutionListTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				final Submission submission = (Submission) ((IStructuredSelection) viewer
-						.getSelection()).getFirstElement();
+				final Submission submission = (Submission) ((IStructuredSelection) viewer.getSelection())
+						.getFirstElement();
 				if (submission == null) {
 					return;
 				}
@@ -195,8 +183,7 @@ public class SubmissionListView extends ViewPart {
 					return;
 				}
 
-				Job job = new SubmissionFetcherJob(submission, roundId,
-						problemId);
+				Job job = new SubmissionFetcherJob(submission, roundId, problemId);
 				job.setUser(true);
 				job.schedule();
 			}

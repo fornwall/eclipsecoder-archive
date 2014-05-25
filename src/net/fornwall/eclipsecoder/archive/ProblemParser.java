@@ -15,27 +15,21 @@ public class ProblemParser {
 	 * @param html
 	 *            The problem statement in html form from the TopCoder server.
 	 */
-	public static ProblemStatement parseProblem(String html,
-			List<ProblemScraper.StringPair> testCasesStrings) {
+	public static ProblemStatement parseProblem(String html, List<ProblemScraper.StringPair> testCasesStrings) {
 		ProblemStatement result = new ProblemStatement();
 
 		result.setHtmlDescription(html);
 		result.setClassName(Utilities.getMatch(html, "<title>(.*)</title>", 1)); //$NON-NLS-1$
-		result.setMethodName(Utilities.getMatch(html,
-				"(?s)(?i)Method:.*?\"statText\">(.*?)</td>", 1)); //$NON-NLS-1$
+		result.setMethodName(Utilities.getMatch(html, "(?s)(?i)Method:.*?\"statText\">(.*?)</td>", 1)); //$NON-NLS-1$
 
-		result.setReturnType(classFromString(Utilities.getMatch(html,
-				"(?s)(?i)>Returns:.*?\"statText\">(.*?)</td>", 1))); //$NON-NLS-1$
+		result.setReturnType(classFromString(Utilities.getMatch(html, "(?s)(?i)>Returns:.*?\"statText\">(.*?)</td>", 1))); //$NON-NLS-1$
 
-		String parametersString = Utilities.getMatch(html,
-				"(?s)(?i)>Parameters:.*?\"statText\">(.*?)</td>", 1); //$NON-NLS-1$
+		String parametersString = Utilities.getMatch(html, "(?s)(?i)>Parameters:.*?\"statText\">(.*?)</td>", 1); //$NON-NLS-1$
 		for (String part : parametersString.split(", ")) { //$NON-NLS-1$
 			result.getParameterTypes().add(classFromString(part));
 		}
 
-		String parameterNamesString = Utilities.getMatch(html, result
-				.getMethodName()
-				+ "\\(.*?\\)", 0); //$NON-NLS-1$
+		String parameterNamesString = Utilities.getMatch(html, result.getMethodName() + "\\(.*?\\)", 0); //$NON-NLS-1$
 		Matcher nameMatcher = Pattern.compile("\\w+?(?=(,|\\)))").matcher( //$NON-NLS-1$
 				parameterNamesString);
 		while (nameMatcher.find()) {
@@ -44,8 +38,7 @@ public class ProblemParser {
 
 		if (testCasesStrings != null && !testCasesStrings.isEmpty()) {
 			for (ProblemScraper.StringPair pair : testCasesStrings) {
-				result.getTestCases().add(
-						parseTestCase(result, pair.first, pair.second));
+				result.getTestCases().add(parseTestCase(result, pair.first, pair.second));
 			}
 		} else {
 			// TODO: Extract test cases from html problem description
@@ -54,33 +47,27 @@ public class ProblemParser {
 		return result;
 	}
 
-	public static ProblemStatement.TestCase parseTestCase(
-			ProblemStatement statement, String expectedString,
+	public static ProblemStatement.TestCase parseTestCase(ProblemStatement statement, String expectedString,
 			String parametersString) {
 		// parametersString is extracted from html problem statement
 		parametersString = parametersString.replaceAll("&gt;", ">").replaceAll( //$NON-NLS-1$ //$NON-NLS-2$
 				"&lt;", "<").replaceAll("&amp;", "&"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-		Object expected = ProblemStatement.parseType(statement.getReturnType(),
-				expectedString);
-		Object[] testCaseParameters = new Object[statement.getParameterTypes()
-				.size()];
+		Object expected = ProblemStatement.parseType(statement.getReturnType(), expectedString);
+		Object[] testCaseParameters = new Object[statement.getParameterTypes().size()];
 
 		parametersString = parametersString.replaceAll("\n", "").replaceAll( //$NON-NLS-1$ //$NON-NLS-2$
 				"\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (statement.getParameterTypes().size() == 1) {
-			testCaseParameters[0] = ProblemStatement.parseType(statement
-					.getParameterTypes().get(0), parametersString);
+			testCaseParameters[0] = ProblemStatement.parseType(statement.getParameterTypes().get(0), parametersString);
 			return new ProblemStatement.TestCase(expected, testCaseParameters);
 		}
 
-		Matcher matcher = Pattern.compile(
-				"\\{\".*?\"}|\\{.*?\\}|(\".*?\")|[^,]+").matcher( //$NON-NLS-1$
+		Matcher matcher = Pattern.compile("\\{\".*?\"}|\\{.*?\\}|(\".*?\")|[^,]+").matcher( //$NON-NLS-1$
 				parametersString);
 		int i = 0;
 		while (matcher.find()) {
-			testCaseParameters[i] = ProblemStatement.parseType(statement
-					.getParameterTypes().get(i), matcher.group(0));
+			testCaseParameters[i] = ProblemStatement.parseType(statement.getParameterTypes().get(i), matcher.group(0));
 			i++;
 		}
 

@@ -16,8 +16,7 @@ public class DisabledWhileRunningJobAction extends Action {
 
 	final Job jobToRun;
 
-	public DisabledWhileRunningJobAction(String text, ImageDescriptor image,
-			Job jobToRun) {
+	public DisabledWhileRunningJobAction(String text, ImageDescriptor image, Job jobToRun) {
 		super(text, image);
 
 		this.jobToRun = jobToRun;

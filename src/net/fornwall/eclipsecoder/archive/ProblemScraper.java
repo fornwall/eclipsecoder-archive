@@ -57,8 +57,7 @@ class ProblemScraper {
 	}
 
 	static IStatus createLoginFailedStatus(LoginException e) {
-		return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID,
-				IStatus.OK, Messages.unableToLoginToTopCoder, e);
+		return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK, Messages.unableToLoginToTopCoder, e);
 	}
 
 	/**
@@ -67,20 +66,18 @@ class ProblemScraper {
 	 * @param listReference
 	 *            a reference to a list which will be filled in upon success
 	 */
-	public static IStatus downloadProblemStats(IProgressMonitor monitor,
-			ListReference listReference) {
+	public static IStatus downloadProblemStats(IProgressMonitor monitor, ListReference listReference) {
 		ObjectOutputStream out = null;
 		try {
 			monitor.subTask(Messages.loggingIn);
-			ProblemScraper connection = new ProblemScraper(EclipseCoderPlugin
-					.tcUserName(), EclipseCoderPlugin.tcPassword());
+			ProblemScraper connection = new ProblemScraper(EclipseCoderPlugin.tcUserName(),
+					EclipseCoderPlugin.tcPassword());
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 			monitor.worked(20);
 
 			monitor.subTask(Messages.openingOutputStream);
-			out = new ObjectOutputStream(new FileOutputStream(
-					getProblemListFile()));
+			out = new ObjectOutputStream(new FileOutputStream(getProblemListFile()));
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 			monitor.worked(5);
@@ -101,9 +98,8 @@ class ProblemScraper {
 		} catch (LoginException e) {
 			return createLoginFailedStatus(e);
 		} catch (Exception e) {
-			return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID,
-					IStatus.OK, Messages.failedToDownloadProblemStats
-							+ e.getMessage(), e);
+			return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
+					Messages.failedToDownloadProblemStats + e.getMessage(), e);
 		} finally {
 			if (out != null) {
 				try {
@@ -116,8 +112,7 @@ class ProblemScraper {
 	}
 
 	/** Utility method for encoding key-value parameters */
-	private static String getEncoded(Map<String, String> parameters)
-			throws UnsupportedEncodingException {
+	private static String getEncoded(Map<String, String> parameters) throws UnsupportedEncodingException {
 		StringBuilder builder = new StringBuilder();
 		for (Map.Entry<String, String> mapEntry : parameters.entrySet()) {
 			if (builder.length() != 0)
@@ -134,8 +129,7 @@ class ProblemScraper {
 	 * incorrupt (aborted write or change of java version).
 	 */
 	private static File getProblemListFile() {
-		return EclipseCoderPlugin.getDefault().getStateLocation().append(
-				"problemStats.ser").toFile(); //$NON-NLS-1$
+		return EclipseCoderPlugin.getDefault().getStateLocation().append("problemStats.ser").toFile(); //$NON-NLS-1$
 	}
 
 	/**
@@ -149,8 +143,7 @@ class ProblemScraper {
 		try {
 			if (!storageFile.exists())
 				return null;
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-					storageFile));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(storageFile));
 			result = (List<ProblemStats>) in.readObject();
 			in.close();
 		} catch (EOFException e) {
@@ -170,8 +163,7 @@ class ProblemScraper {
 		// File listFile = new
 		// File("src/net/fornwall/eclipsecoder/archive/problems/list.xml");
 		List<ProblemStats> problemStats;
-		problemStats = connection
-				.getProblemStatsList(new NullProgressMonitor());
+		problemStats = connection.getProblemStatsList(new NullProgressMonitor());
 
 		// if (listFile.exists()) {
 		// XMLDecoder decoder = new XMLDecoder(new FileInputStream(listFile));
@@ -186,9 +178,8 @@ class ProblemScraper {
 		// }
 
 		for (ProblemStats stats : problemStats) {
-			File file = new File(
-					"src/net/fornwall/eclipsecoder/archive/problems/problem-" //$NON-NLS-1$
-							+ stats.getProblemId() + ".xml"); //$NON-NLS-1$
+			File file = new File("src/net/fornwall/eclipsecoder/archive/problems/problem-" //$NON-NLS-1$
+					+ stats.getProblemId() + ".xml"); //$NON-NLS-1$
 			if (file.exists()) {
 				System.out.println("skipping file " + stats.getClassName()); //$NON-NLS-1$
 				continue;
@@ -258,8 +249,7 @@ class ProblemScraper {
 		percentageString = percentageString.trim();
 		if (percentageString.length() > 0) {
 			// remove trailing percentage character
-			percentageString = percentageString.substring(0, percentageString
-					.length() - 1);
+			percentageString = percentageString.substring(0, percentageString.length() - 1);
 			return Double.parseDouble(percentageString);
 		}
 		return -1;
@@ -281,8 +271,7 @@ class ProblemScraper {
 		parameters.put("rem", "on"); //$NON-NLS-1$ //$NON-NLS-2$
 		parameters.put("nextpage", "http://www.topcoder.com/tc"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		DataOutputStream printout = new DataOutputStream(urlConn
-				.getOutputStream());
+		DataOutputStream printout = new DataOutputStream(urlConn.getOutputStream());
 		printout.writeBytes(getEncoded(parameters));
 		printout.flush();
 		printout.close();
@@ -296,9 +285,7 @@ class ProblemScraper {
 				}
 			}
 		}
-		if (sessionIdCookie == null
-				|| readAll(urlConn.getInputStream()).contains(
-						"TopCoder | Login")) { //$NON-NLS-1$
+		if (sessionIdCookie == null || readAll(urlConn.getInputStream()).contains("TopCoder | Login")) { //$NON-NLS-1$
 			throw new LoginException(Messages.noSessionIdCheckYourCredentials);
 		}
 	}
@@ -321,8 +308,7 @@ class ProblemScraper {
 
 		// the problem detail page, links to the top submission of each language
 		// - any will do
-		String coderIdMatch = Utilities.getMatch(page,
-				"problem_solution.*cr=(\\d+)", 1); //$NON-NLS-1$
+		String coderIdMatch = Utilities.getMatch(page, "problem_solution.*cr=(\\d+)", 1); //$NON-NLS-1$
 		if (coderIdMatch == null) {
 			// no solution found - no examples can be extracted
 			return result;
@@ -336,11 +322,9 @@ class ProblemScraper {
 			return null;
 		}
 
-		Matcher matcher = Pattern
-				.compile("(?i)(?s)<tr valign=\"top\">.*?</tr>").matcher(page); //$NON-NLS-1$
+		Matcher matcher = Pattern.compile("(?i)(?s)<tr valign=\"top\">.*?</tr>").matcher(page); //$NON-NLS-1$
 		while (matcher.find()) {
-			Matcher m = Pattern.compile(
-					"(?i)(?s)<td[^>]*?statText[^>]+>([^<]+)<").matcher( //$NON-NLS-1$
+			Matcher m = Pattern.compile("(?i)(?s)<td[^>]*?statText[^>]+>([^<]+)<").matcher( //$NON-NLS-1$
 					matcher.group());
 			m.find();
 			String parameterString = m.group(1);
@@ -359,16 +343,13 @@ class ProblemScraper {
 	/**
 	 * Get the HTML problem statement for the problem.
 	 */
-	public String getHtmlProblemStatement(ProblemStats problem)
-			throws Exception {
+	public String getHtmlProblemStatement(ProblemStats problem) throws Exception {
 		String page = getPage("stat?c=problem_statement&pm=" //$NON-NLS-1$
 				+ problem.getProblemId() + "&rd=" + problem.getRoundId()); //$NON-NLS-1$
 
 		// the problem statement is embedded in a page
-		Matcher matcher = Pattern
-				.compile(
-						"<TD CLASS=\"problemText\" VALIGN=\"middle\" ALIGN=\"left\">(.*?) </TD>", //$NON-NLS-1$
-						Pattern.DOTALL).matcher(page);
+		Matcher matcher = Pattern.compile("<TD CLASS=\"problemText\" VALIGN=\"middle\" ALIGN=\"left\">(.*?) </TD>", //$NON-NLS-1$
+				Pattern.DOTALL).matcher(page);
 		matcher.find();
 		try {
 			return "<html><head><title>" + problem.getClassName() //$NON-NLS-1$
@@ -388,15 +369,11 @@ class ProblemScraper {
 		return readAll(connection.getInputStream());
 	}
 
-	public ProblemStatement getProblemStatement(final ProblemStats problemStats)
-			throws Exception {
-		return ProblemParser.parseProblem(
-				getHtmlProblemStatement(problemStats),
-				getExamples(problemStats));
+	public ProblemStatement getProblemStatement(final ProblemStats problemStats) throws Exception {
+		return ProblemParser.parseProblem(getHtmlProblemStatement(problemStats), getExamples(problemStats));
 	}
 
-	public List<ProblemStats> getProblemStatsList(IProgressMonitor monitor)
-			throws Exception {
+	public List<ProblemStats> getProblemStatsList(IProgressMonitor monitor) throws Exception {
 		monitor.subTask(Messages.downloadingPage);
 		String page = getPage("tc?module=ProblemArchive&sc=0&sd=asc&er=10000"); //$NON-NLS-1$
 		monitor.worked(30);
@@ -404,8 +381,7 @@ class ProblemScraper {
 		monitor.subTask(Messages.parsingPage);
 		page = page.substring(page.lastIndexOf("Success Rate") + 20, page //$NON-NLS-1$
 				.lastIndexOf("&lt;&lt;")); //$NON-NLS-1$
-		Matcher matcher = Pattern.compile(
-				"(?:statText|left|right)\">([^<>]*?)</").matcher(page); //$NON-NLS-1$
+		Matcher matcher = Pattern.compile("(?:statText|left|right)\">([^<>]*?)</").matcher(page); //$NON-NLS-1$
 		List<ProblemStats> result = new ArrayList<ProblemStats>();
 
 		Pattern roundIdPattern = Pattern.compile("rd=([0-9]*)"); //$NON-NLS-1$
@@ -420,10 +396,10 @@ class ProblemScraper {
 		// Area</A></TD>
 		//
 		// <TD CLASS="statText" HEIGHT="13" ALIGN="left" NOWRAP="on">
-		//            
+		//
 		// <A HREF="/stat?c=round_overview&rd=2009" class="statText">
 		// TCCC &#039;01 Finals</A>
-		//            
+		//
 		// </TD>
 		// <TD CLASS="statText" HEIGHT="13" ALIGN="left">
 		// 06.07.2001</TD>
@@ -449,12 +425,10 @@ class ProblemScraper {
 		while (matcher.find()) {
 			String className = matcher.group(1).trim();
 
-			Matcher idMatcher = roundIdPattern.matcher(page.substring(matcher
-					.start()));
+			Matcher idMatcher = roundIdPattern.matcher(page.substring(matcher.start()));
 			idMatcher.find();
 			int roundId = Integer.parseInt(idMatcher.group(1).trim());
-			idMatcher = problemIdPattern.matcher(page.substring(
-					matcher.start() - 50, matcher.start()));
+			idMatcher = problemIdPattern.matcher(page.substring(matcher.start() - 50, matcher.start()));
 
 			idMatcher.find();
 
@@ -491,9 +465,8 @@ class ProblemScraper {
 
 			matcher.find();
 
-			ProblemStats problem = new ProblemStats(className, problemId,
-					roundId, contestName, contestDate, categories, div1Level,
-					div1Succ, div2Level, div2Succ);
+			ProblemStats problem = new ProblemStats(className, problemId, roundId, contestName, contestDate,
+					categories, div1Level, div1Succ, div2Level, div2Succ);
 			result.add(problem);
 		}
 
@@ -501,8 +474,7 @@ class ProblemScraper {
 		return result;
 	}
 
-	public String getSubmission(int coderId, int roundId, int problemId,
-			IProgressMonitor monitor) throws Exception {
+	public String getSubmission(int coderId, int roundId, int problemId, IProgressMonitor monitor) throws Exception {
 		monitor.subTask(Messages.loadingPage);
 		String page = getPage("stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
 				+ roundId + "&pm=" + problemId); //$NON-NLS-1$
@@ -513,12 +485,10 @@ class ProblemScraper {
 			return null;
 		}
 
-		Matcher matcher = Pattern.compile(
-				"(?i)(?s)<td class=\"problemText\".*?>(.*?)</td>") //$NON-NLS-1$
+		Matcher matcher = Pattern.compile("(?i)(?s)<td class=\"problemText\".*?>(.*?)</td>") //$NON-NLS-1$
 				.matcher(page);
 		if (!matcher.find()) {
-			Utilities.showMessageDialog(Messages.errorInParsing,
-					Messages.errorInParsingPleaseReport);
+			Utilities.showMessageDialog(Messages.errorInParsing, Messages.errorInParsingPleaseReport);
 			return null;
 		}
 

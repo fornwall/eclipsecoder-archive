@@ -23,9 +23,8 @@ public class ProblemStats implements Serializable {
 
 	public static final int COLUMN_CATEGORIES = 6;
 
-	static final String[] COLUMN_NAMES = { Messages.columnNameClassName,
-			Messages.columnNameContestName, Messages.columnNameDate,
-			Messages.columnNameDivision, Messages.columnNameLevel,
+	static final String[] COLUMN_NAMES = { Messages.columnNameClassName, Messages.columnNameContestName,
+			Messages.columnNameDate, Messages.columnNameDivision, Messages.columnNameLevel,
 			Messages.columnNameSuccessRate, Messages.columnNameCategories };
 
 	String categories;
@@ -54,9 +53,8 @@ public class ProblemStats implements Serializable {
 		// to allow instantiation during deserialization
 	}
 
-	public ProblemStats(String className, int problemId, int roundId,
-			String contestName, String contestDate, String categories,
-			int div1Level, double div1Succ, int div2Level, double div2Succ) {
+	public ProblemStats(String className, int problemId, int roundId, String contestName, String contestDate,
+			String categories, int div1Level, double div1Succ, int div2Level, double div2Succ) {
 		this.className = className;
 		this.roundId = roundId;
 		this.problemId = problemId;
@@ -75,13 +73,11 @@ public class ProblemStats implements Serializable {
 		case COLUMN_CONTEST_NAME:
 		case COLUMN_DATE:
 		case COLUMN_CATEGORIES:
-			return getFieldString(column).compareTo(
-					other.getFieldString(column));
+			return getFieldString(column).compareTo(other.getFieldString(column));
 		case COLUMN_DIVISION:
 			return getDivisionString().compareTo(other.getDivisionString());
 		case COLUMN_SUCCESS_RATE:
-			return getSuccessRateString().compareTo(
-					other.getSuccessRateString());
+			return getSuccessRateString().compareTo(other.getSuccessRateString());
 		case COLUMN_LEVEL:
 			return getLevelString().compareTo(other.getLevelString());
 		default:
@@ -92,8 +88,7 @@ public class ProblemStats implements Serializable {
 
 	@Override
 	public boolean equals(Object other) {
-		return (other instanceof ProblemStats && ((ProblemStats) other)
-				.getProblemId() == getProblemId());
+		return (other instanceof ProblemStats && ((ProblemStats) other).getProblemId() == getProblemId());
 	}
 
 	public String getCategories() {

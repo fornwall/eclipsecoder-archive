@@ -25,8 +25,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * A job to fetch a list of submissions for a specified TopCoder problem.
  */
 public class SubmissionListFetcherJob extends Job {
-	private static final String[] LEVEL_NAMES = {
-			"PADDING", Messages.columnNameOne, Messages.columnNameTwo, //$NON-NLS-1$
+	private static final String[] LEVEL_NAMES = { "PADDING", Messages.columnNameOne, Messages.columnNameTwo, //$NON-NLS-1$
 			Messages.columnNameThree };
 
 	ProblemStats stats;
@@ -47,8 +46,7 @@ public class SubmissionListFetcherJob extends Job {
 		final List<String> languageStrings = new ArrayList<String>();
 
 		// rough approximation used for progress monitor
-		final int expected = (stats.getDiv1Level() > 0 && stats.getDiv2Level() > 0) ? 1400
-				: 700;
+		final int expected = (stats.getDiv1Level() > 0 && stats.getDiv2Level() > 0) ? 1400 : 700;
 
 		if (stats.getDiv1Level() != -1) {
 			divisions.add(1);
@@ -72,9 +70,8 @@ public class SubmissionListFetcherJob extends Job {
 
 		try {
 			monitor.subTask(Messages.openingConnection);
-			URL url = new URL(
-					"http://www.topcoder.com/tc?module=BasicData&c=dd_round_results&rd=" //$NON-NLS-1$
-							+ stats.getRoundId());
+			URL url = new URL("http://www.topcoder.com/tc?module=BasicData&c=dd_round_results&rd=" //$NON-NLS-1$
+					+ stats.getRoundId());
 			URLConnection connection = url.openConnection();
 			monitor.worked(3);
 
@@ -88,10 +85,8 @@ public class SubmissionListFetcherJob extends Job {
 				private Map<String, String> map = new HashMap<String, String>();
 
 				@Override
-				public void characters(char[] ch, int start, int length)
-						throws SAXException {
-					if (currentElement == null
-							|| currentElement.equals("dd_round_results") //$NON-NLS-1$
+				public void characters(char[] ch, int start, int length) throws SAXException {
+					if (currentElement == null || currentElement.equals("dd_round_results") //$NON-NLS-1$
 							|| currentElement.equals("row")) { //$NON-NLS-1$
 						return;
 					}
@@ -99,16 +94,14 @@ public class SubmissionListFetcherJob extends Job {
 				}
 
 				@Override
-				public void endElement(String uri, String localName, String name)
-						throws SAXException {
+				public void endElement(String uri, String localName, String name) throws SAXException {
 					if (monitor.isCanceled()) {
 						throw new CanceledException();
 					}
 					for (int levelIndex = 0; levelIndex < levelStrings.size(); levelIndex++) {
 						Integer division = divisions.get(levelIndex);
 						if (localName.equals("row") //$NON-NLS-1$
-								&& division.toString().equals(
-										map.get("division")) //$NON-NLS-1$
+								&& division.toString().equals(map.get("division")) //$NON-NLS-1$
 								&& ("Passed System Test".equals(map //$NON-NLS-1$
 										.get(levelStrings.get(levelIndex))))) {
 							count++;
@@ -117,22 +110,18 @@ public class SubmissionListFetcherJob extends Job {
 								monitor.worked(5);
 							}
 
-							Submission s = new Submission(Integer.parseInt(map
-									.get("coder_id")), map.get("handle"), //$NON-NLS-1$ //$NON-NLS-2$
+							Submission s = new Submission(Integer.parseInt(map.get("coder_id")), map.get("handle"), //$NON-NLS-1$ //$NON-NLS-2$
 									Integer.parseInt(map.get("new_rating")), //$NON-NLS-1$
-									Integer.parseInt(map.get(
-											pointsStrings.get(levelIndex))
-											.replace(".", "")), map //$NON-NLS-1$ //$NON-NLS-2$
-											.get(languageStrings
-													.get(levelIndex)), division);
+									Integer.parseInt(map.get(pointsStrings.get(levelIndex)).replace(".", "")), map //$NON-NLS-1$ //$NON-NLS-2$
+											.get(languageStrings.get(levelIndex)), division);
 							solutionList.add(s);
 						}
 					}
 				}
 
 				@Override
-				public void startElement(String uri, String localName,
-						String name, Attributes atts) throws SAXException {
+				public void startElement(String uri, String localName, String name, Attributes atts)
+						throws SAXException {
 					currentElement = localName;
 				}
 			});
@@ -149,15 +138,13 @@ public class SubmissionListFetcherJob extends Job {
 			monitor.subTask(Messages.updatingTable);
 			Utilities.runInDisplayThread(new Runnable() {
 				public void run() {
-					SubmissionListView.showSolutions(solutionList, stats
-							.getRoundId(), stats.getProblemId());
+					SubmissionListView.showSolutions(solutionList, stats.getRoundId(), stats.getProblemId());
 				}
 			});
 			return Status.OK_STATUS;
 		} catch (Exception e1) {
-			return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID,
-					IStatus.OK, Messages.failedToRetrieveSubmissionList
-							+ e1.getMessage(), e1);
+			return new Status(IStatus.ERROR, EclipseCoderPlugin.PLUGIN_ID, IStatus.OK,
+					Messages.failedToRetrieveSubmissionList + e1.getMessage(), e1);
 		}
 	}
 
