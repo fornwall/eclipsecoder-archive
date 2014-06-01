@@ -33,18 +33,22 @@ public class EditorOpener {
 			this.name = name;
 		}
 
+		@Override
 		public InputStream getContents() throws CoreException {
 			return new ByteArrayInputStream(input.getBytes());
 		}
 
+		@Override
 		public IPath getFullPath() {
 			return null;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public boolean isReadOnly() {
 			return true;
 		}
@@ -65,27 +69,33 @@ public class EditorOpener {
 			this.imageDescriptor = imageDescriptor;
 		}
 
+		@Override
 		public boolean exists() {
 			return true;
 		}
 
 		// hmm, this one is never called?
+		@Override
 		public ImageDescriptor getImageDescriptor() {
 			return imageDescriptor;
 		}
 
+		@Override
 		public String getName() {
 			return stringStorage.getName();
 		}
 
+		@Override
 		public IPersistableElement getPersistable() {
 			return null;
 		}
 
+		@Override
 		public IStorage getStorage() throws CoreException {
 			return stringStorage;
 		}
 
+		@Override
 		public String getToolTipText() {
 			return toolTipText;
 		}
