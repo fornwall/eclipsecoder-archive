@@ -27,6 +27,7 @@ public class ProblemFetcherJob extends Job {
 	public ProblemFetcherJob(ProblemStats stats) {
 		super(Messages.checkingOutProblem);
 		this.stats = stats;
+		setUser(true);
 	}
 
 	@Override
@@ -90,6 +91,7 @@ public class ProblemFetcherJob extends Job {
 				return Status.CANCEL_STATUS;
 
 			Utilities.runInDisplayThread(new Runnable() {
+				@Override
 				public void run() {
 					languageSupport.createProject(problemStatement).openSourceFileInEditor();
 				}

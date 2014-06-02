@@ -33,6 +33,7 @@ public class SubmissionListFetcherJob extends Job {
 	public SubmissionListFetcherJob(ProblemStats stats) {
 		super(Messages.retrievingSubmissionList);
 		this.stats = stats;
+		setUser(true);
 	}
 
 	@Override
@@ -137,6 +138,7 @@ public class SubmissionListFetcherJob extends Job {
 
 			monitor.subTask(Messages.updatingTable);
 			Utilities.runInDisplayThread(new Runnable() {
+				@Override
 				public void run() {
 					SubmissionListView.showSolutions(solutionList, stats.roundId, stats.problemId);
 				}
