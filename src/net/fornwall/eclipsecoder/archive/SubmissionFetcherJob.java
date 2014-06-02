@@ -49,7 +49,7 @@ public class SubmissionFetcherJob extends Job {
 			}
 			monitor.subTask(Messages.openingEditor);
 			Utilities.runInDisplayThread(new Runnable() {
-
+				@Override
 				public void run() {
 					String fileExtension = "txt"; //$NON-NLS-1$
 					if (submission.language.equals("Java")) { //$NON-NLS-1$
@@ -65,7 +65,6 @@ public class SubmissionFetcherJob extends Job {
 					EditorOpener.openEditor(submissionString, submission.coderHandle + Messages.sSubmission,
 							submission.coderHandle + Messages.sSubmissionToProblem, fileExtension);
 				}
-
 			});
 			return Status.OK_STATUS;
 		} catch (Exception e1) {
