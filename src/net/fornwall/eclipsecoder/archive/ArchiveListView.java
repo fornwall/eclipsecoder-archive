@@ -1,15 +1,10 @@
 package net.fornwall.eclipsecoder.archive;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 import net.fornwall.eclipsecoder.languages.LanguageSupportFactory;
 import net.fornwall.eclipsecoder.preferences.EclipseCoderPlugin;
-import net.fornwall.eclipsecoder.util.Utilities;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -42,7 +37,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 import org.xml.sax.SAXException;
 
@@ -82,7 +76,7 @@ public class ArchiveListView extends ViewPart {
 			monitor.subTask(Messages.updatingTable);
 
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				@SuppressWarnings("synthetic-access")//$NON-NLS-1$
+				@Override
 				public void run() {
 					viewer.setInput(listReference.problemStats);
 					for (int i = 0; i < problemListTable.getColumnCount(); i++) {
@@ -124,13 +118,9 @@ public class ArchiveListView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				ProblemStats stats = (ProblemStats) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-				if (stats == null) {
-					return;
+				if (stats != null) {
+					new SubmissionListFetcherJob(stats).schedule();
 				}
-
-				Job job = new SubmissionListFetcherJob(stats);
-				job.setUser(true);
-				job.schedule();
 			}
 		});
 
@@ -138,40 +128,10 @@ public class ArchiveListView extends ViewPart {
 		viewEditorialItem.setText(Messages.viewMatchEditorial);
 		viewEditorialItem.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final ProblemStats stats = (ProblemStats) ((IStructuredSelection) viewer.getSelection())
-						.getFirstElement();
-				try {
-					// TODO: Cache a bit?
-					URLConnection c = new URL("http://apps.topcoder.com/wiki/display/tc/Algorithm+Problem+Set+Analysis") //$NON-NLS-1$
-							.openConnection();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(c.getInputStream()));
-					try {
-						String line;
-						while ((line = reader.readLine()) != null) {
-							if (line.contains(stats.contestName)) {
-								String href = Utilities.getMatch(line, "<a href=\"(.*?)\"", 1); //$NON-NLS-1$
-								href = href.replaceAll("&amp;", "&");
-								// jump to the right place directly - older
-								// problem statements are not formatted this
-								// way, though it cannot hurt
-								href += "#" + stats.problemId; //$NON-NLS-1$
-								PlatformUI
-										.getWorkbench()
-										.getBrowserSupport()
-										.createBrowser(IWorkbenchBrowserSupport.AS_VIEW,
-												ArchiveListView.class.getCanonicalName(), "", "").openURL( //$NON-NLS-1$ //$NON-NLS-2$
-												new URL(href));
-								return;
-							}
-						}
-					} finally {
-						reader.close();
-					}
-					Utilities.showMessageDialog(Messages.noMatchEditorialFound,
-							Messages.noMatchEditorialFoundDescription);
-				} catch (Exception e1) {
-					Utilities.showException(e1);
+			public void widgetSelected(SelectionEvent event) {
+				ProblemStats stats = (ProblemStats) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+				if (stats != null) {
+					new MatchEditorialOpenerJob(stats).schedule();
 				}
 			}
 		});
@@ -219,14 +179,11 @@ public class ArchiveListView extends ViewPart {
 					return;
 				}
 
-				Job job;
 				if ((new File(new File(System.getProperty("user.home")), ".enablefetchmarker")).exists()) {
-					job = new ProblemFetcherJob(stats);
+					new ProblemFetcherJob(stats).schedule();
 				} else {
-					job = new SubmissionListFetcherJob(stats);
+					new SubmissionListFetcherJob(stats).schedule();
 				}
-				job.setUser(true);
-				job.schedule();
 			}
 		});
 
@@ -315,10 +272,12 @@ class ProblemComparator extends ViewerSorter {
 
 class ProblemLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		ProblemStats stats = (ProblemStats) element;
 		return stats.getFieldString(columnIndex);

@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -106,7 +107,9 @@ public class SubmissionListView extends ViewPart {
 	 * Update the problem list table by downloading the latest list from the
 	 * TopCoder web site and displaying them in the problem list table.
 	 */
-	public static void showSolutions(List<Submission> solutions, int roundId, int problemId) {
+	public static void showSolutions(List<Submission> solutions, ProblemStats stats) {
+		int roundId = stats.roundId;
+		int problemId = stats.problemId;
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SubmissionListView.VIEW_ID);
 		} catch (PartInitException e) {
@@ -119,6 +122,9 @@ public class SubmissionListView extends ViewPart {
 		for (int i = 0; i < instance.solutionListTable.getColumnCount(); i++) {
 			instance.solutionListTable.getColumn(i).pack();
 		}
+
+		String contentDescription = NLS.bind(Messages.showingSubmissionsForProblem, stats.className, stats.contestName);
+		instance.setContentDescription(contentDescription);
 	}
 
 	int problemId;

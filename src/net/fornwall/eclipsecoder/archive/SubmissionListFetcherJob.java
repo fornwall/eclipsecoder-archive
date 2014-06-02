@@ -25,6 +25,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * A job to fetch a list of submissions for a specified TopCoder problem.
  */
 public class SubmissionListFetcherJob extends Job {
+
 	private static final String[] LEVEL_NAMES = { "PADDING", Messages.columnNameOne, Messages.columnNameTwo, //$NON-NLS-1$
 			Messages.columnNameThree };
 
@@ -140,7 +141,7 @@ public class SubmissionListFetcherJob extends Job {
 			Utilities.runInDisplayThread(new Runnable() {
 				@Override
 				public void run() {
-					SubmissionListView.showSolutions(solutionList, stats.roundId, stats.problemId);
+					SubmissionListView.showSolutions(solutionList, stats);
 				}
 			});
 			return Status.OK_STATUS;

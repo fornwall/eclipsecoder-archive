@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -255,7 +256,7 @@ class ProblemScraper {
 		return -1;
 	}
 
-	private String sessionIdCookie;
+	private String httpCookies;
 
 	ProblemScraper(String username, String password) throws Exception {
 		URL url = new URL("https://community.topcoder.com/tc"); //$NON-NLS-1$
@@ -277,16 +278,19 @@ class ProblemScraper {
 		printout.close();
 
 		List<String> setCookieList = urlConn.getHeaderFields().get("Set-Cookie"); //$NON-NLS-1$
+		StringBuilder httpCookieBuilder = new StringBuilder();
 		if (setCookieList != null) {
 			for (String aCookie : setCookieList) {
-				if (aCookie.startsWith("JSESSIONID")) { //$NON-NLS-1$
-					sessionIdCookie = aCookie;
-					break;
+				if (httpCookieBuilder.length() > 0) {
+					httpCookieBuilder.append("; ");
 				}
+				httpCookieBuilder.append(aCookie);
 			}
 		}
-		if (sessionIdCookie == null || readAll(urlConn.getInputStream()).contains("TopCoder | Login")) { //$NON-NLS-1$
+		if (httpCookieBuilder.length() == 0 || readAll(urlConn.getInputStream()).contains("TopCoder | Login")) { //$NON-NLS-1$
 			throw new LoginException(Messages.noSessionIdCheckYourCredentials);
+		} else {
+			httpCookies = httpCookieBuilder.toString();
 		}
 	}
 
@@ -303,7 +307,7 @@ class ProblemScraper {
 
 		// we need a coder and room id of a correct submission to obtain the
 		// test cases.
-		String page = getPage("tc?module=ProblemDetail&rd=" //$NON-NLS-1$
+		String page = getPage("community", "tc?module=ProblemDetail&rd=" //$NON-NLS-1$
 				+ problem.roundId + "&pm=" + problem.problemId); //$NON-NLS-1$
 
 		// the problem detail page, links to the top submission of each language
@@ -314,7 +318,7 @@ class ProblemScraper {
 			return result;
 		}
 		int coderId = Integer.parseInt(coderIdMatch);
-		page = getPage("stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
+		page = getPage("apps", "stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
 				+ problem.roundId + "&pm=" //$NON-NLS-1$
 				+ problem.problemId);
 
@@ -344,7 +348,7 @@ class ProblemScraper {
 	 * Get the HTML problem statement for the problem.
 	 */
 	public String getHtmlProblemStatement(ProblemStats problem) throws Exception {
-		String page = getPage("stat?c=problem_statement&pm=" //$NON-NLS-1$
+		String page = getPage("apps", "stat?c=problem_statement&pm=" //$NON-NLS-1$
 				+ problem.problemId + "&rd=" + problem.roundId); //$NON-NLS-1$
 
 		// the problem statement is embedded in a page
@@ -361,12 +365,19 @@ class ProblemScraper {
 		}
 	}
 
-	private String getPage(String path) throws Exception {
-		URL url = new URL("http://community.topcoder.com/" + path); //$NON-NLS-1$
+	private String getPage(String subdomain, String path) throws Exception {
+		return readAll(openStream(subdomain, path));
+	}
+
+	private InputStream openStream(String subdomain, String path) throws Exception {
+		URL url = new URL("http://" + subdomain + ".topcoder.com/" + path); //$NON-NLS-1$
 		URLConnection connection = url.openConnection();
-		// FIXME: when to set this (breaks i.e. editorial fetching)?
-		connection.setRequestProperty("Cookie", sessionIdCookie); //$NON-NLS-1$
-		return readAll(connection.getInputStream());
+		connection.setRequestProperty("Cookie", httpCookies); //$NON-NLS-1$
+		return connection.getInputStream();
+	}
+
+	private BufferedReader openReader(String subdomain, String path) throws Exception {
+		return new BufferedReader(new InputStreamReader(openStream(subdomain, path)));
 	}
 
 	public ProblemStatement getProblemStatement(final ProblemStats problemStats) throws Exception {
@@ -375,7 +386,7 @@ class ProblemScraper {
 
 	public List<ProblemStats> getProblemStatsList(IProgressMonitor monitor) throws Exception {
 		monitor.subTask(Messages.downloadingPage);
-		String page = getPage("tc?module=ProblemArchive&sc=0&sd=asc&er=10000"); //$NON-NLS-1$
+		String page = getPage("community", "tc?module=ProblemArchive&sc=0&sd=asc&er=10000"); //$NON-NLS-1$
 		monitor.worked(30);
 
 		monitor.subTask(Messages.parsingPage);
@@ -476,7 +487,7 @@ class ProblemScraper {
 
 	public String getSubmission(int coderId, int roundId, int problemId, IProgressMonitor monitor) throws Exception {
 		monitor.subTask(Messages.loadingPage);
-		String page = getPage("stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
+		String page = getPage("apps", "stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
 				+ roundId + "&pm=" + problemId); //$NON-NLS-1$
 		monitor.worked(40);
 		monitor.subTask(Messages.parsingPage);
@@ -506,4 +517,42 @@ class ProblemScraper {
 		return submission.trim();
 	}
 
+	public String getEditorialUrl(ProblemStats stats) throws Exception {
+		String massagedContestName = stats.contestName;
+		if (massagedContestName.startsWith("TCO1")) {
+			massagedContestName = massagedContestName.replace("TCO1", "TCO 201");
+		}
+		massagedContestName = massagedContestName.replace(' ', '+');
+		String modernWikiLink = "/wiki/display/tc/" + massagedContestName + "#" + stats.problemId;
+
+		try {
+			String modernWikiHtml = getPage("apps", modernWikiLink);
+			if (modernWikiHtml.contains("Match summary")) {
+				return "http://apps.topcoder.com/" + modernWikiLink;
+			}
+		} catch (FileNotFoundException e) {
+			// Ignore page not found.
+		}
+
+		String contestNameWithoutSpaces = stats.contestName.replace(' ', '+');
+		try (BufferedReader in = openReader("community", "/wiki/display/tc/Algorithm+Problem+Set+Analysis")) {
+			String line;
+			while ((line = in.readLine()) != null) {
+				if (line.contains(stats.contestName) || line.contains(contestNameWithoutSpaces)) {
+					String regexp = "<a href=(\"|')(.*?)(\"|')";
+					String href = Utilities.getMatch(line, regexp, 2); //$NON-NLS-1$
+					if (href == null) {
+						continue;
+					}
+					href = href.replaceAll("&amp;", "&");
+					// jump to the right place directly - older
+					// problem statements are not formatted this
+					// way, though it cannot hurt
+					href += "#" + stats.problemId; //$NON-NLS-1$
+					return href;
+				}
+			}
+		}
+		return null;
+	}
 }

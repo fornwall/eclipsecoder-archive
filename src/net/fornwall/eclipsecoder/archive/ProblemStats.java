@@ -2,6 +2,8 @@ package net.fornwall.eclipsecoder.archive;
 
 import java.io.Serializable;
 
+import org.eclipse.core.runtime.Assert;
+
 public class ProblemStats implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -62,7 +64,7 @@ public class ProblemStats implements Serializable {
 		case COLUMN_LEVEL:
 			return getLevelString().compareTo(other.getLevelString());
 		default:
-			System.out.println("ERROR IN COMPARETO: " + column); //$NON-NLS-1$
+			Assert.isTrue(false, "Invalid column: " + column);
 			return 0;
 		}
 	}
