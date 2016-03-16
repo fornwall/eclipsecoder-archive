@@ -318,9 +318,10 @@ class ProblemScraper {
 			return result;
 		}
 		int coderId = Integer.parseInt(coderIdMatch);
-		page = getPage("apps", "stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
-				+ problem.roundId + "&pm=" //$NON-NLS-1$
-				+ problem.problemId);
+		page = getPage("community", //$NON-NLS-1$
+				"stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$
+						+ problem.roundId + "&pm=" //$NON-NLS-1$
+						+ problem.problemId);
 
 		if (page.contains("Solution Not Available")) { //$NON-NLS-1$
 			return null;
@@ -348,11 +349,12 @@ class ProblemScraper {
 	 * Get the HTML problem statement for the problem.
 	 */
 	public String getHtmlProblemStatement(ProblemStats problem) throws Exception {
-		String page = getPage("apps", "stat?c=problem_statement&pm=" //$NON-NLS-1$
+		String page = getPage("community", "stat?c=problem_statement&pm=" //$NON-NLS-1$
 				+ problem.problemId + "&rd=" + problem.roundId); //$NON-NLS-1$
 
 		// the problem statement is embedded in a page
-		Matcher matcher = Pattern.compile("<TD CLASS=\"problemText\" VALIGN=\"middle\" ALIGN=\"left\">(.*?) </TD>", //$NON-NLS-1$
+		// System.out.println(page);
+		Matcher matcher = Pattern.compile("<td class=\"problemText\" valign=\"middle\" align=\"left\">(.*?) </td>", //$NON-NLS-1$
 				Pattern.DOTALL).matcher(page);
 		matcher.find();
 		try {
@@ -370,7 +372,7 @@ class ProblemScraper {
 	}
 
 	private InputStream openStream(String subdomain, String path) throws Exception {
-		URL url = new URL("http://" + subdomain + ".topcoder.com/" + path); //$NON-NLS-1$
+		URL url = new URL("https://" + subdomain + ".topcoder.com/" + path); //$NON-NLS-1$
 		URLConnection connection = url.openConnection();
 		connection.setRequestProperty("Cookie", httpCookies); //$NON-NLS-1$
 		return connection.getInputStream();
@@ -386,9 +388,8 @@ class ProblemScraper {
 
 	public List<ProblemStats> getProblemStatsList(IProgressMonitor monitor) throws Exception {
 		monitor.subTask(Messages.downloadingPage);
-		String page = getPage("community", "tc?module=ProblemArchive&sc=0&sd=asc&er=10000"); //$NON-NLS-1$
+		String page = getPage("community", "tc?module=ProblemArchive&sc=0&er=10000");
 		monitor.worked(30);
-
 		monitor.subTask(Messages.parsingPage);
 		page = page.substring(page.lastIndexOf("Success Rate") + 20, page //$NON-NLS-1$
 				.lastIndexOf("&lt;&lt;")); //$NON-NLS-1$
@@ -477,7 +478,7 @@ class ProblemScraper {
 			matcher.find();
 
 			ProblemStats problem = new ProblemStats(className, problemId, roundId, contestName, contestDate,
-					categories, div1Level, div1Succ, div2Level, div2Succ);
+					categories,div1Level, div1Succ, div2Level, div2Succ);
 			result.add(problem);
 		}
 
@@ -487,7 +488,7 @@ class ProblemScraper {
 
 	public String getSubmission(int coderId, int roundId, int problemId, IProgressMonitor monitor) throws Exception {
 		monitor.subTask(Messages.loadingPage);
-		String page = getPage("apps", "stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
+		String page = getPage("community", "stat?c=problem_solution&cr=" + coderId + "&rd=" //$NON-NLS-1$ //$NON-NLS-2$
 				+ roundId + "&pm=" + problemId); //$NON-NLS-1$
 		monitor.worked(40);
 		monitor.subTask(Messages.parsingPage);
@@ -514,6 +515,7 @@ class ProblemScraper {
 		submission = submission.replaceAll("&gt;", ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		submission = submission.replaceAll("&lt;", "<"); //$NON-NLS-1$ //$NON-NLS-2$
 		submission = submission.replaceAll("&amp;", "&");
+		submission = submission.replaceAll("&nbsp;", " ");
 		return submission.trim();
 	}
 
