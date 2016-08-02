@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.fornwall.eclipsecoder.archive; singleton:=true
-Bundle-Version: 0.3.6
+Bundle-Version: 0.3.7
 Require-Bundle: net.fornwall.eclipsecoder,
  org.eclipse.core.runtime,
  org.eclipse.ui,
